@@ -1,3 +1,0 @@
-[submodule "src/IR32"]
-	path = src/IR32
-	url = git@github.com:open-laser-tag/IR32.git
