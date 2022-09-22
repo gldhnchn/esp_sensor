@@ -15,23 +15,23 @@
 class Led
 {
 public:
-    Led(uint8_t pin);
-    void light_on(),
-        light_off(),
-        blinks(uint8_t n = 3, uint16_t duration_in_ms = 150);
+	Led(uint8_t pin);
+	void light_on(),
+		light_off(),
+		blinks(uint8_t n = 3, uint16_t duration_in_ms = 150);
 
 private:
-    uint8_t _pin;
+	uint8_t _pin;
 };
 
 class Button
 {
 public:
-    Button(uint8_t pin);
-    void read_pin();
-    bool pressed = false;
+	Button(uint8_t pin);
+	void read_pin();
+	bool pressed = false;
 
 private:
-    uint8_t _pin;
+	uint8_t _pin;
 };
 #endif
