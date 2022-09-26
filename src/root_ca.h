@@ -1,3 +1,4 @@
+// This is the root ca of lets encrypt certificates.
 const char* root_ca = R"ROOT_CA(
 -----BEGIN CERTIFICATE-----
 MIIFazCCA1OgAwIBAgIRAIIQz7DSQONZRGPgu2OCiwAwDQYJKoZIhvcNAQELBQAw

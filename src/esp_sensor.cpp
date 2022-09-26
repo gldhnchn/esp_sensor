@@ -1,9 +1,7 @@
 #include "esp_sensor.h"
 
-TaskHandle_t xHandle_handle_ir;
 Led led(ONBOARDLED_PIN);
 CRGB leds[NUM_LEDS];
-bool ota_flag = false;
 
 /**
  * @brief arduino setup
@@ -19,26 +17,23 @@ void setup()
 
 	ESP_LOGI(logtag, "*******************************************");
 	ESP_LOGI(logtag, "Hello, this is ESP Sensor.");
-	ESP_LOGI(logtag, "Firmware version: %s", GIT_TAG);
 	ESP_LOGI(logtag, "*******************************************");
 
-	ESP_LOGD(logtag, "Begin EEPROM");
-	EEPROM.begin(EEPROM_SIZE);
-	ESP_LOGD(logtag, "Read OTA flag");
-	ota_flag = EEPROM.read(EEPROM_ADDR_OTA);
-	ESP_LOGD(logtag, "OTA flag: %i", ota_flag);
-	if (ota_flag)
-	{
-		ESP_LOGI(logtag, "Entering OTA mode");
-		ESP_LOGI(logtag, "Setting OTA flag to 0");
-		EEPROM.write(EEPROM_ADDR_OTA, 0);
-		EEPROM.commit();
-		init_ota(OTA_WIFI_SSID, OTA_WIWI_PASSWORD);
-	}
-	else
-	{
-		ESP_LOGD(logtag, "Entering normal mode, starting init...");
+	esp32FOTA esp32fota("esp32-fota-http", GIT_TAG, false);
+	FOTAConfig_t config = esp32fota.getConfig();
+	config.name = "esp32-fota-http";
+	config.manifest_url = "https://raspberrypi.nee1974kl4pqrpa7.myfritz.net/esp32fota.json";
+	config.sem = SemverClass( GIT_TAG );
+	config.check_sig = false;
+	config.unsafe = false;
+	CryptoMemAsset *MyRootCA = new CryptoMemAsset("Certificates Chain", root_ca, strlen(root_ca)+1 );
+	config.root_ca = MyRootCA;
+	esp32fota.setConfig(config);
 
+	wifi_init();
+	wifi_connect(WIFI_SSID, WIWI_PASSWORD);
+
+/*
 //init fast LED strip
 #if defined LED_TYPE_NEOPIXEL && defined LED_TYPE_APA102
 #error "Please specify only one LED type"
@@ -55,38 +50,28 @@ void setup()
 		//init trigger and ir handling
 		create_tasks();
 		FastLED.show();
-		//blink for telling that setup is done
-		ESP_LOGD(logtag, "Init finished: blink LED");
-		led.blinks();
+*/
+
+	led.blinks();
+
+	bool updatedNeeded = esp32fota.execHTTPcheck();
+	if (updatedNeeded)
+	{
+		ESP_LOGI(logtag, "Update available");
+		esp32fota.execOTA();
 	}
+	else
+	{
+		ESP_LOGI(logtag, "No updated needed");
+	}
+	vTaskDelay(5000 / portTICK_PERIOD_MS);
+	ESP_LOGI(logtag, "Going to sleep");
+	ESP.deepSleep(10 * 1000000);
 }
 
-/**
- * @brief arduino loop
- * This is the arduino loop function. It is not used, instead RTOS tasks are used.
- * That's why the loop task is delayed max. When OTA flag is set to active during boot, this loop is used for handling OTA.
- * 
- */
+// This is never reached since ESP.deepSleep is called before.
 void loop()
 {
-	if (ota_flag)
-		handle_ota();
-	else
-		vTaskDelay(portMAX_DELAY); /*wait as much as possible ... */
-}
-
-/**
- * @brief Create all tasks object
- * This function creates all RTOS tasks. 
- */
-void create_tasks()
-{
-	 xTaskCreate(
-		handle_player_status,         /* Task function. */
-		"handle_player_status",       /* name of task. */
-		2048,                         /* Stack size of task */
-		NULL,                         /* parameter of the task */
-		1,                            /* priority of the task */
-		&xHandle_handle_player_status /* Task handle to keep track of created task */
-	);
+	
+	vTaskDelay(portMAX_DELAY); /*wait as much as possible ... */
 }

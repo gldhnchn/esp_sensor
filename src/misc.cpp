@@ -1,6 +1,5 @@
 #include "Arduino.h"
 #include "misc.h"
-#include <string>
 
 Led::Led(uint8_t pin)
 {
@@ -27,16 +26,4 @@ void Led::blinks(uint8_t n, uint16_t duration_in_ms)
 		light_off();
 		delay(duration_in_ms);
 	}
-}
-
-Button::Button(uint8_t pin)
-{
-	pinMode(pin, INPUT_PULLUP);
-	_pin = pin;
-}
-
-void Button::read_pin()
-{
-	pressed = !digitalRead(_pin);
-	return;
 }
