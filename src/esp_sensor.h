@@ -4,6 +4,23 @@
 /* ++++++ */
 /* config */
 
+/* Timing */
+#define CYCLE_TIME_IN_S 60
+
+/* MQTT */
+#define MQTT_HOST "example.net"  // CHANGE: IP of MQTT Broker
+#define MQTT_PORT 8883  // CHANGE: Port of MQTT Broker
+#define MQTT_TOPIC "home/"  // CHANGE: MQTT Topic to publish the CO2 value to
+#define MQTT_USER esp32
+#define MQTT_PASWORD password
+
+#define ASYNC_TCP_SSL_ENABLED true
+
+/* Sensor Pins */
+#define MH_Z19B_PIN 4  // Connect MH-Z14A PWM pin to pin 4 of the ESP32
+#define GY_213V_PIN
+#define BME280_PIN
+
 /* RGB LEDs */
 //choose one LED type
 //#define LED_TYPE_APA102
@@ -14,9 +31,10 @@
 #define LED_OVERALL_BRIGHTNESS 20 //scale 0 to 255
 #define ONBOARDLED_PIN 2
 
-/* OTA */
-#define OTA_WIFI_SSID "wlanssid"
-#define OTA_WIWI_PASSWORD "wlanpassword"
+/* WIFI */
+#define WIFI_SSID "wlanssid"
+#define WIWI_PASSWORD "wlanpassword"
+#define OTA_FIRWAMRE_MANIFEST_URL "https://example.net/esp32fota.json"
 
 /* ++++++++ */
 /* includes */
@@ -24,6 +42,7 @@
 #include <esp32fota.h>
 #include <FastLED.h>
 #include <esp_log.h>
+#include <AsyncMqttClient.h>
 #include "misc.h"
 #include "wifi.h"
 #include "root_ca.h"
@@ -34,10 +53,6 @@
 #else
 #define GIT_TAG "0.0.1"
 #endif
-
-/* global variables*/
-extern Led led;
-extern CRGB leds[NUM_LEDS];
 
 /* function declerations */
 void setup();
