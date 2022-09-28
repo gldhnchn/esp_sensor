@@ -41,6 +41,7 @@ void setup()
 	}
 	MQTTClient mqttClient;
 	WiFiClientSecure net;
+	net.setCACert(root_ca);
 	mqttClient.begin(MQTT_HOST, MQTT_PORT, net);
 	ESP_LOGI(logtag, "MQTT: connect");
 	unsigned long old_time = millis();
