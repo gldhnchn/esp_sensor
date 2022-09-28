@@ -1,5 +1,27 @@
 #include "esp_sensor.h"
 
+void onMqttConnect(bool sessionPresent)
+{
+	Serial.println("Connected to MQTT.");
+}
+
+void onMqttDisconnect(AsyncMqttClientDisconnectReason reason)
+{
+	Serial.println("Disconnected from MQTT.");
+
+	if (reason == AsyncMqttClientDisconnectReason::TLS_BAD_FINGERPRINT)
+	{
+		Serial.println("Bad server fingerprint.");
+	}
+}
+
+void onMqttPublish(uint16_t packetId)
+{
+	Serial.println("Publish acknowledged.");
+	Serial.print("  packetId: ");
+	Serial.println(packetId);
+}
+
 /**
  * @brief arduino setup
  * This is the arduino setup function. It is run once at startup.
@@ -40,6 +62,9 @@ void setup()
 		ESP_LOGI(logtag, "No updated needed");
 	}
 	AsyncMqttClient mqttClient;
+	mqttClient.onConnect(onMqttConnect);
+	mqttClient.onDisconnect(onMqttDisconnect);
+	mqttClient.onPublish(onMqttPublish);
 	ESP_LOGD(logtag, "MQTT: set server");
 	mqttClient.setServer(MQTT_HOST, MQTT_PORT);
 	//ESP_LOGD(logtag, "MQTT: set secure");
@@ -48,6 +73,14 @@ void setup()
 	mqttClient.setCredentials(MQTT_USER, MQTT_PASWORD);
 	ESP_LOGI(logtag, "MQTT: connect");
 	mqttClient.connect();
+	unsigned long old_time = millis();
+	unsigned long new_time = old_time;
+	while(!mqttClient.connected() || new_time - old_time > 10000)
+	{
+		ESP_LOGD(logtag, "MQTT: Waiting for connection...");
+		vTaskDelay(1000 / portTICK_PERIOD_MS);
+		new_time = millis();
+	}
 	ESP_LOGI(logtag, "MQTT: publish message");
 	mqttClient.publish(MQTT_TOPIC, 0, true, "{'T': 1, 'ID': 'AA:AA:AA:AA:AA:AA'}");
 
