@@ -40,7 +40,7 @@
 #include <esp32fota.h>
 #include <FastLED.h>
 #include <esp_log.h>
-#include <AsyncMqttClient.h>
+#include <MQTT.h>
 #include "misc.h"
 #include "wifi.h"
 #include "root_ca.h"
