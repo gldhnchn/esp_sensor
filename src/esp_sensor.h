@@ -11,10 +11,8 @@
 #define MQTT_HOST "example.net"  // CHANGE: IP of MQTT Broker
 #define MQTT_PORT 8883  // CHANGE: Port of MQTT Broker
 #define MQTT_TOPIC "home/"  // CHANGE: MQTT Topic to publish the CO2 value to
-#define MQTT_USER esp32
-#define MQTT_PASWORD password
-
-#define ASYNC_TCP_SSL_ENABLED true
+#define MQTT_USER "esp32"
+#define MQTT_PASWORD "password"
 
 /* Sensor Pins */
 #define MH_Z19B_PIN 4  // Connect MH-Z14A PWM pin to pin 4 of the ESP32

@@ -42,15 +42,14 @@ void setup()
 	AsyncMqttClient mqttClient;
 	ESP_LOGD(logtag, "MQTT: set server");
 	mqttClient.setServer(MQTT_HOST, MQTT_PORT);
-	ESP_LOGD(logtag, "MQTT: set secure");
-	mqttClient.setSecure(true);
+	//ESP_LOGD(logtag, "MQTT: set secure");
+	//mqttClient.setSecure(true);
 	ESP_LOGD(logtag, "MQTT: set credentials");
 	mqttClient.setCredentials(MQTT_USER, MQTT_PASWORD);
 	ESP_LOGI(logtag, "MQTT: connect");
 	mqttClient.connect();
 	ESP_LOGI(logtag, "MQTT: publish message");
-	mqttClient.publish(MQTT_TOPIC, 0, true, "{'T': 1, 'ID': 'AA:AA:AA:AA:AA:AA'}")
-}
+	mqttClient.publish(MQTT_TOPIC, 0, true, "{'T': 1, 'ID': 'AA:AA:AA:AA:AA:AA'}");
 
 /*
 	CRGB leds[NUM_LEDS];
