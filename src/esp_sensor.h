@@ -42,6 +42,8 @@
 #include <esp_log.h>
 #include <WiFiClientSecure.h>
 #include <MQTT.h>
+#include <HTU2xD_SHT2x_Si70xx.h>
+#include <float.h> 
 #include "misc.h"
 #include "wifi.h"
 #include "root_ca.h"
