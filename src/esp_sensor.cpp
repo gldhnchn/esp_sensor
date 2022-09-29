@@ -50,8 +50,8 @@ void setup()
 	{
 		Serial.println("Connected to server!");
 		// Make a HTTP request:
-		net.println("GET https://"MQTT_HOST" HTTP/1.0");
-		net.println("Host: "MQTT_HOST);
+		net.println("GET https://" MQTT_HOST" HTTP/1.0");
+		net.println("Host: " MQTT_HOST);
 		net.println("Connection: close");
 		net.println();
 
@@ -74,7 +74,7 @@ void setup()
 	}
 	net.stop();
 	ESP_LOGD(logtag, "WiFiClient: connect");
-	if(!net.connect(MQTT_HOST, MQTT_PORT))
+	if(!net.connect(MQTT_HOST, 8083))
 		ESP_LOGE(logtag, "Connection failed");
 	ESP_LOGD(logtag, "MQTT: begin");
 	mqttClient.begin(MQTT_HOST, MQTT_PORT, net);
