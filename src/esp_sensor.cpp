@@ -41,7 +41,11 @@ void setup()
 	}
 	MQTTClient mqttClient;
 	WiFiClientSecure net;
+	ESP_LOGD(logtag, "WiFiClient: set CA");
 	net.setCACert(root_ca);
+	ESP_LOGD(logtag, "WiFiClient: connect");
+	net.connect(MQTT_HOST, MQTT_PORT);
+	ESP_LOGD(logtag, "MQTT: begin");
 	mqttClient.begin(MQTT_HOST, MQTT_PORT, net);
 	ESP_LOGI(logtag, "MQTT: connect");
 	unsigned long old_time = millis();
@@ -53,7 +57,10 @@ void setup()
 		new_time = millis();
 	}
 	ESP_LOGI(logtag, "MQTT: publish message");
-	mqttClient.publish(MQTT_TOPIC, "{'T': 1, 'ID': 'AA:AA:AA:AA:AA:AA'}");
+	if(mqttClient.publish(MQTT_TOPIC, "{'T': 1, 'ID': 'AA:AA:AA:AA:AA:AA'}"))
+		ESP_LOGI(logtag, "MQTT: publishing succeeded");
+	else
+		ESP_LOGE(logtag, "MQTT: publishing failed");
 
 /*
 	CRGB leds[NUM_LEDS];

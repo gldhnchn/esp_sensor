@@ -40,6 +40,7 @@
 #include <esp32fota.h>
 #include <FastLED.h>
 #include <esp_log.h>
+#include <WiFiClientSecure.h>
 #include <MQTT.h>
 #include "misc.h"
 #include "wifi.h"
