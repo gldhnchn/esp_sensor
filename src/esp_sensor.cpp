@@ -7,7 +7,7 @@
 void setup()
 {
 	const char *logtag = "setup";
-	esp_log_level_set("*", ESP_LOG_DEBUG);
+	esp_log_level_set("*", ESP_LOG_VERBOSE);
 
 	Serial.begin(115200);
 
