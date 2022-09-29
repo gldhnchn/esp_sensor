@@ -43,8 +43,38 @@ void setup()
 	WiFiClientSecure net;
 	ESP_LOGD(logtag, "WiFiClient: set CA");
 	net.setCACert(root_ca);
+
+	if (!net.connect(MQTT_HOST, 443))
+		Serial.println("Connection failed!");
+	else
+	{
+		Serial.println("Connected to server!");
+		// Make a HTTP request:
+		net.println("GET https://"MQTT_HOST" HTTP/1.0");
+		net.println("Host: "MQTT_HOST);
+		net.println("Connection: close");
+		net.println();
+
+		while (net.connected())
+		{
+			String line = net.readStringUntil('\n');
+			if (line == "\r")
+			{
+				Serial.println("headers received");
+				break;
+			}
+		}
+	// if there are incoming bytes available
+	// from the server, read them and print them:
+	while (net.available())
+	{
+		char c = net.read();
+		Serial.write(c);
+	}
+	net.stop();
 	ESP_LOGD(logtag, "WiFiClient: connect");
-	net.connect(MQTT_HOST, MQTT_PORT);
+	if(!net.connect(MQTT_HOST, MQTT_PORT))
+		ESP_LOGE(logtag, "Connection failed");
 	ESP_LOGD(logtag, "MQTT: begin");
 	mqttClient.begin(MQTT_HOST, MQTT_PORT, net);
 	ESP_LOGI(logtag, "MQTT: connect");
