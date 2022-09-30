@@ -18,6 +18,7 @@
 #define MH_Z19B_PIN 4  // Connect MH-Z14A PWM pin to pin 4 of the ESP32
 #define GY_213V_PIN
 #define BME280_PIN
+#define MHZ19_BAUDRATE 9600
 
 /* RGB LEDs */
 //choose one LED type
@@ -44,6 +45,9 @@
 #include <MQTT.h>
 #include <HTU2xD_SHT2x_Si70xx.h>
 #include <float.h> 
+#include <HardwareSerial.h>
+#include <MHZ19.h>
+#include <limits.h>
 #include "misc.h"
 #include "wifi.h"
 #include "root_ca.h"
