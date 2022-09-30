@@ -84,6 +84,17 @@ void setup()
 	ESP_LOGD(logtag, "Get CO2 sensor temperature");
 	co2_temp = mhz19.getTempAdjustment();
 	ESP_LOGI(logtag, "CO2 sensor temperature is %i", co2_temp);
+	pinMode(4, INPUT);
+	int Messbereich = 2000; // Der voreingestellte Messbereich (0-5000ppm). Der Sensor MH-Z19B kann auch auf einen Maximalwert von 2000ppm vorkonfiguriert sein.
+	unsigned long ZeitMikrosekunden; // Variable für die Dauer des PWM-Signalpegels in Mikrosenkunden
+	unsigned long ZeitMillisekunden; // Variable für die Dauer des PWM-Signalpegels in Millisekunden
+	int PPM = 0; // Variable für den CO2-Messwert in ppm (parts per million - Anteile pro Million)
+	float Prozent=0; // Variable für den prozentuale Länge des PWM-Signals
+	ZeitMikrosekunden = pulseIn(4, HIGH, 2000000); // Der pulseIn Befehl misst die Zeit, ab der ein Signal am angegebenen Pin auf HIGH wechselt und in diesem Zustand verbleibt. Standartmäßig endet diese Messung nach maximal 1.000.000 Mikrosekunden (1000ms). Durch das Ahängen des letzten Wertes kann man diesen sogenannten "Timeout" verlängern. Da das Signal des CO2 Sensors bis zu 1004ms lang sein kann, müssen wir den Wert entsprechend hoch ansetzen.
+	ZeitMillisekunden = ZeitMikrosekunden/1000; // Umwandeln der Zeiteinheit von Mikrosekunden in Millisekunden.
+	float Prozent = ZeitMillisekunden / 1004.0; // Die maximale Länge des PWM-Signals ist laut Datenblatt des MH-Z19B 1004ms (Millisekunden) lang. Daher berechnen wir hier die gemessene PWM-Signaldauer durch die maximal mögliche Signaldauer und erhalten einen Prozentwert des aktiven (5V) Pegels im PWM-Signal. Dieser Prozentwert spiegelt einen PPM-Wert zwischen 0PPM und 5000PPM wieder.
+	PPM = Messbereich * Prozent; // PPM-Wert berechnen aus der prozentualen Signaldauer und dem maximalen Messbereich.
+	ESP_LOGI(logtag, "CO2 (PWM) is %i", PPM);
 
 	MQTTClient mqttClient;
 	WiFiClientSecure net;
