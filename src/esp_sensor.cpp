@@ -42,55 +42,20 @@ void setup()
 
 	float temperature = FLT_MAX;
 	float humidity = FLT_MAX;
-	HTU2xD_SHT2x_SI70xx sht21(SHT2x_SENSOR, HUMD_12BIT_TEMP_14BIT); //sensor type, resolution
-	ESP_LOGD(logtag, "Start sensor SHT21");
-	if (sht21.begin() != true) //reset sensor, set heater off, set resolution, check power (sensor doesn't operate correctly if VDD < +2.25v)
-	{
-		ESP_LOGE(logtag, "SHT21 not connected, fail or VDD < +2.25v"); //(F()) save string to flash & keeps dynamic memory free
-		delay(5000);
-	}
-	else
-	{
-		ESP_LOGI(logtag, "SHT21 OK");
-		temperature = sht21.readTemperature(); //accuracy +-0.3C in range 0C..60C at 14-bit
-		if (temperature != HTU2XD_SHT2X_SI70XX_ERROR) //HTU2XD_SHT2X_SI70XX_ERROR = 255, library returns 255 if error occurs
-			ESP_LOGI(logtag, "Temperatur is %f", temperature);
-		else
-			ESP_LOGE(logtag, "Error reading temperature");
-		delay(500); //measurement with high frequency leads to heating of the sensor, see NOTE
-		if (temperature != HTU2XD_SHT2X_SI70XX_ERROR)         //if temperature OK, measure RH & calculate compensated humidity
-			humidity = sht21.getCompensatedHumidity(temperature); //accuracy +-2% in range 0%..100%/0C..80C at 12-bit, to compensates influence of T on RH
-		else
-			humidity = sht21.readHumidity(); ////accuracy +-2% in range 20%..80%/25C at 12-bit
-		if (humidity != HTU2XD_SHT2X_SI70XX_ERROR)
-			ESP_LOGI(logtag, "Humidity is %f", humidity);
-		else
-			ESP_LOGE(logtag, "Error reading humidity");
-	}
+	SHT21 sht21;
+	ESP_LOGI(logtag, "SHT21 begin");
+	sht21.begin();
+	ESP_LOGI(logtag, "SHT21 get humidity");
+	humidity = sht21.getHumidity();
+	ESP_LOGI(logtag, "humidity %f", humidity);
+	ESP_LOGI(logtag, "SHT21 get temperature");
+	temperature = sht21.getTemperature();
+	ESP_LOGI(logtag, "temperature %f", temperature);
 
-	int co2 = INT_MAX;
-	int co2_temp = INT_MAX;
-	HardwareSerial uart2(2);
-	MHZ19 mhz19;
-	ESP_LOGD(logtag, "Begin uart2 for MHZ19");
-	uart2.begin(MHZ19_BAUDRATE);
-	ESP_LOGD(logtag, "Begin MHZ19");
-	mhz19.begin(uart2);
-	ESP_LOGD(logtag, "Set auto calibration on");
-	mhz19.autoCalibration();
 	ESP_LOGD(logtag, "Get CO2");
-	co2 = mhz19.getCO2();
-	ESP_LOGI(logtag, "CO2 is %i", co2);
-	ESP_LOGD(logtag, "Get CO2 sensor temperature");
-	co2_temp = mhz19.getTempAdjustment();
-	ESP_LOGI(logtag, "CO2 sensor temperature is %i", co2_temp);
-	pinMode(4, INPUT);
-	int Messbereich = 2000; // Der voreingestellte Messbereich (0-5000ppm). Der Sensor MH-Z19B kann auch auf einen Maximalwert von 2000ppm vorkonfiguriert sein.
-	unsigned long  ZeitMikrosekunden = pulseIn(4, HIGH, 2000000); // Der pulseIn Befehl misst die Zeit, ab der ein Signal am angegebenen Pin auf HIGH wechselt und in diesem Zustand verbleibt. Standartmäßig endet diese Messung nach maximal 1.000.000 Mikrosekunden (1000ms). Durch das Ahängen des letzten Wertes kann man diesen sogenannten "Timeout" verlängern. Da das Signal des CO2 Sensors bis zu 1004ms lang sein kann, müssen wir den Wert entsprechend hoch ansetzen.
-	unsigned long  ZeitMillisekunden = ZeitMikrosekunden/1000; // Umwandeln der Zeiteinheit von Mikrosekunden in Millisekunden.
-	float Prozent = ZeitMillisekunden / 1004.0; // Die maximale Länge des PWM-Signals ist laut Datenblatt des MH-Z19B 1004ms (Millisekunden) lang. Daher berechnen wir hier die gemessene PWM-Signaldauer durch die maximal mögliche Signaldauer und erhalten einen Prozentwert des aktiven (5V) Pegels im PWM-Signal. Dieser Prozentwert spiegelt einen PPM-Wert zwischen 0PPM und 5000PPM wieder.
-	int PPM = Messbereich * Prozent; // PPM-Wert berechnen aus der prozentualen Signaldauer und dem maximalen Messbereich.
-	ESP_LOGI(logtag, "CO2 (PWM) is %i", PPM);
+	MHZ19 mhz19_pwm(2, MH_Z19B_PWM_PIN);
+	int co2 = mhz19_pwm.getPpmPwm();
+	ESP_LOGI(logtag, "co2: %i", co2);
 
 	MQTTClient mqttClient;
 	WiFiClientSecure net;
@@ -109,7 +74,7 @@ void setup()
 	}
 	ESP_LOGI(logtag, "MQTT: publish message");
 	char payload[50];
-	sprintf(payload, "{\"T\": %f, \"h\": %f, \"co2\": %i, \"co2t\": %i, \"ID\": \"%s\"}", temperature, humidity, co2, co2_temp, WiFi.macAddress().c_str());
+	sprintf(payload, "{\"T\": %f, \"h\": %f, \"co2\": %i, \"ID\": \"%s\"}", temperature, humidity, co2, WiFi.macAddress().c_str());
 	if(mqttClient.publish(MQTT_TOPIC, payload))
 		ESP_LOGI(logtag, "MQTT: publishing succeeded");
 	else
