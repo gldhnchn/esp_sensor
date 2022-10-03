@@ -127,6 +127,8 @@ void setup()
 */
 	Led led(ONBOARDLED_PIN);
 	led.blinks();
+	ESP_LOGI(logtag, "Disconnect MQTT");
+	mqttClient.disconnect();
 	ESP_LOGI(logtag, "Disconnect WiFi");
 	WiFi.disconnect();
 	ESP_LOGI(logtag, "Waiting 5 seconds before going to sleep");
