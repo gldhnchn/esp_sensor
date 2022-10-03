@@ -3,7 +3,6 @@
 void start_watchdog(void *parameter)
 {
 	const char *logtag = "watchdog";
-
 	ESP_LOGD(logtag, "Watchdog started. Going to sleep for 5 Minutes.");
 	vTaskDelay(1000*60*5 / portTICK_PERIOD_MS);
 	ESP_LOGW(logtag, "Grrrr. Watchdog waking up. ESP haven't slept yet. Wuf Wuf! Forcing reboot");
@@ -16,6 +15,15 @@ void start_watchdog(void *parameter)
  */
 void setup()
 {
+	const char *logtag = "setup";
+	esp_log_level_set("*", ESP_LOG_VERBOSE);
+
+	Serial.begin(115200);
+
+	ESP_LOGI(logtag, "*******************************************");
+	ESP_LOGI(logtag, "Hello, this is ESP Sensor.");
+	ESP_LOGI(logtag, "*******************************************");
+
 	TaskHandle_t xHandle_start_watchdog;
 	xTaskCreate(
 		start_watchdog,         /* Task function. */
@@ -25,15 +33,6 @@ void setup()
 		1,                      /* priority of the task */
 		&xHandle_start_watchdog /* Task handle to keep track of created task */
 	);
-
-	const char *logtag = "setup";
-	esp_log_level_set("*", ESP_LOG_VERBOSE);
-
-	Serial.begin(115200);
-
-	ESP_LOGI(logtag, "*******************************************");
-	ESP_LOGI(logtag, "Hello, this is ESP Sensor.");
-	ESP_LOGI(logtag, "*******************************************");
 
 	esp32FOTA esp32fota("esp32-fota-http", GIT_TAG, false);
 	FOTAConfig_t config = esp32fota.getConfig();
@@ -92,7 +91,6 @@ void setup()
 		vTaskDelay(1000 / portTICK_PERIOD_MS);
 		new_time = millis();
 	}
-	ESP_LOGI(logtag, "MQTT: publish message");
 	char payload[50];
 	int len = sprintf(payload, "{");
 	if(temperature > -20. && temperature < 60.)
@@ -102,6 +100,7 @@ void setup()
 	if(co2 > 0 && co2 < 5000)
 		len += sprintf(payload + len, "\"co2\": %i, ", co2);
 	len += sprintf(payload + len, "\"ID\": \"%s\", \"v\": \"%s\"}",  WiFi.macAddress().c_str(), GIT_TAG);
+	ESP_LOGI(logtag, "MQTT: publish message: %s", payload);
 	if(mqttClient.publish(MQTT_TOPIC, payload))
 		ESP_LOGI(logtag, "MQTT: publishing succeeded");
 	else
