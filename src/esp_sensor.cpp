@@ -1,11 +1,31 @@
 #include "esp_sensor.h"
 
+void start_watchdog(void *parameter)
+{
+	const char *logtag = "watchdog";
+
+	ESP_LOGD(logtag, "Watchdog started. Going to sleep for 5 Minutes.");
+	vTaskDelay(1000*60*5 / portTICK_PERIOD_MS);
+	ESP_LOGW(logtag, "Grrrr. Watchdog waking up. ESP haven't slept yet. Wuf Wuf! Forcing reboot");
+	ESP.restart();
+}
+
 /**
  * @brief arduino setup
  * This is the arduino setup function. It is run once at startup.
  */
 void setup()
 {
+	TaskHandle_t xHandle_start_watchdog;
+	xTaskCreate(
+		start_watchdog,         /* Task function. */
+		"start watchdog",       /* name of task. */
+		2048,                   /* Stack size of task */
+		NULL,                   /* parameter of the task */
+		1,                      /* priority of the task */
+		&xHandle_start_watchdog /* Task handle to keep track of created task */
+	);
+
 	const char *logtag = "setup";
 	esp_log_level_set("*", ESP_LOG_VERBOSE);
 
