@@ -74,7 +74,14 @@ void setup()
 	}
 	ESP_LOGI(logtag, "MQTT: publish message");
 	char payload[50];
-	sprintf(payload, "{\"T\": %f, \"h\": %f, \"co2\": %i, \"ID\": \"%s\", \"v\": \"%s\"}", temperature, humidity, co2, WiFi.macAddress().c_str(), GIT_TAG);
+	int len = sprintf(payload, "{");
+	if(temperature > -20. && temperature < 60.)
+		len += sprintf(payload + len, "\"T\": %f, ", temperature);
+	if(humidity > 0. && humidity < 100.)
+		len += sprintf(payload + len, "\"h\": %f, ", humidity);
+	if(co2 > 0 && co2 < 5000)
+		len += sprintf(payload + len, "\"co2\": %i, ", co2);
+	len += sprintf(payload + len, "\"ID\": \"%s\", \"v\": \"%s\"}",  WiFi.macAddress().c_str(), GIT_TAG);
 	if(mqttClient.publish(MQTT_TOPIC, payload))
 		ESP_LOGI(logtag, "MQTT: publishing succeeded");
 	else
