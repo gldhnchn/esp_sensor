@@ -127,6 +127,8 @@ void setup()
 */
 	Led led(ONBOARDLED_PIN);
 	led.blinks();
+	ESP_LOGI(logtag, "Disconnect WiFi");
+	WiFi.disconnect();
 	ESP_LOGI(logtag, "Waiting 5 seconds before going to sleep");
 	vTaskDelay(5000 / portTICK_PERIOD_MS);
 	ESP_LOGI(logtag, "Going to sleep");
