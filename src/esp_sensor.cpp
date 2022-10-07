@@ -4,7 +4,7 @@ void start_watchdog(void *parameter)
 {
 	const char *logtag = "watchdog";
 	ESP_LOGD(logtag, "Watchdog started. Going to sleep for 5 Minutes.");
-	vTaskDelay(1000*60*5 / portTICK_PERIOD_MS);
+	vTaskDelay(TIMEOUT_FOR_WATCHDOG_IN_MS/ portTICK_PERIOD_MS);
 	ESP_LOGW(logtag, "Grrrr. Watchdog waking up. ESP haven't slept yet. Wuf Wuf! Forcing reboot");
 	ESP.restart();
 }
@@ -73,6 +73,7 @@ void setup()
 
 	ESP_LOGD(logtag, "Get CO2");
 	MHZ19 mhz19_pwm(2, MH_Z19B_PWM_PIN);
+	digitalRead(MH_Z19B_PWM_PIN);
 	int co2 = mhz19_pwm.getPpmPwm();
 	ESP_LOGI(logtag, "co2: %i", co2);
 
@@ -83,21 +84,19 @@ void setup()
 	ESP_LOGD(logtag, "MQTT: begin");
 	mqttClient.begin(MQTT_HOST, MQTT_PORT, net);
 	ESP_LOGI(logtag, "MQTT: connect");
-	unsigned long old_time = millis();
-	unsigned long new_time = old_time;
-	while(!mqttClient.connect(MQTT_USER, MQTT_USER, MQTT_PASWORD) && new_time - old_time < 10000)
+	unsigned long timestamp = millis();
+	while(!mqttClient.connect(MQTT_USER, MQTT_USER, MQTT_PASWORD) && millis() - timestamp < MQTT_TIMEOUT_IN_MS)
 	{
 		ESP_LOGD(logtag, "MQTT: Waiting for connection...");
 		vTaskDelay(1000 / portTICK_PERIOD_MS);
-		new_time = millis();
 	}
 	char payload[50];
 	int len = sprintf(payload, "{");
-	if(temperature > -20. && temperature < 60.)
+	if(temperature > -20 && temperature < 60)
 		len += sprintf(payload + len, "\"T\": %f, ", temperature);
-	if(humidity > 0. && humidity < 100.)
+	if(humidity > 1 && humidity < 100)
 		len += sprintf(payload + len, "\"h\": %f, ", humidity);
-	if(co2 > 0 && co2 < 5000)
+	if(co2 > 100 && co2 < 5000)
 		len += sprintf(payload + len, "\"co2\": %i, ", co2);
 	len += sprintf(payload + len, "\"ID\": \"%s\", \"v\": \"%s\"}",  WiFi.macAddress().c_str(), GIT_TAG);
 	ESP_LOGI(logtag, "MQTT: publish message: %s", payload);
@@ -131,8 +130,8 @@ void setup()
 	mqttClient.disconnect();
 	ESP_LOGI(logtag, "Disconnect WiFi");
 	WiFi.disconnect();
-	ESP_LOGI(logtag, "Waiting 5 seconds before going to sleep");
-	vTaskDelay(5000 / portTICK_PERIOD_MS);
+	ESP_LOGI(logtag, "Waiting %i seconds before going to sleep", TIME_BEFORE_SLEEP_IN_MS/1000);
+	vTaskDelay(TIME_BEFORE_SLEEP_IN_MS / portTICK_PERIOD_MS);
 	ESP_LOGI(logtag, "Going to sleep");
 	ESP.deepSleep(CYCLE_TIME_IN_S * 1000000);
 }

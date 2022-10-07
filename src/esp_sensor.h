@@ -6,13 +6,15 @@
 
 /* Timing */
 #define CYCLE_TIME_IN_S 60
+#define TIMEOUT_FOR_WATCHDOG_IN_MS 1000*60*5
+#define TIME_BEFORE_SLEEP_IN_MS 5000
 
 /* MQTT */
 #define MQTT_HOST "example.net"  // CHANGE: IP of MQTT Broker
 #define MQTT_PORT 8883  // CHANGE: Port of MQTT Broker
 #define MQTT_TOPIC "home/"  // CHANGE: MQTT Topic to publish the CO2 value to
 #define MQTT_USER "esp32"
-#define MQTT_PASWORD "password"
+#define MQTT_TIMEOUT_IN_MS 10000
 
 /* Sensor Pins */
 #define MH_Z19B_PWM_PIN 4  // Connect MH-Z14A PWM pin to pin 4 of the ESP32
