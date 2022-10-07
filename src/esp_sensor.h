@@ -4,6 +4,16 @@
 /* ++++++ */
 /* config */
 
+/* Max Min Values */
+#define TEMPERATURE_MAX 50
+#define TEMPERATURE_MIN -20
+#define HUMIDITY_MAX 100
+#define HUMIDITY_MIN 20
+#define PRESSURE_MAX 150000
+#define PRESSURE_MIN 50000
+#define CO2_MAX 5000
+#define CO2_MIN 100
+
 /* Timing */
 #define CYCLE_TIME_IN_S 60
 #define TIMEOUT_FOR_WATCHDOG_IN_MS 1000*60*5
@@ -17,10 +27,7 @@
 #define MQTT_TIMEOUT_IN_MS 10000
 
 /* Sensor Pins */
-#define MH_Z19B_PWM_PIN 4  // Connect MH-Z14A PWM pin to pin 4 of the ESP32
-#define GY_213V_PIN
-#define BME280_PIN
-#define MHZ19_BAUDRATE 9600
+#define MH_Z19B_PWM_PIN 4
 
 /* RGB LEDs */
 //choose one LED type
@@ -49,6 +56,7 @@
 #include <float.h> 
 #include <limits.h>
 #include <MHZ19.h>
+#include <Adafruit_BME280.h>
 #include "misc.h"
 #include "wifi.h"
 #include "root_ca.h"

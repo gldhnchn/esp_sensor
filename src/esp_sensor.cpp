@@ -61,15 +61,38 @@ void setup()
 
 	float temperature = FLT_MAX;
 	float humidity = FLT_MAX;
+	float pressure = FLT_MAX;
+
+	Adafruit_BME280 bme; // use I2C interface
+	ESP_LOGD(logtag, "Begin BME sensor");
+	if (bme.begin(0x76))
+	{
+		ESP_LOGD(logtag, "Read BME temperature");
+		temperature = bme.readTemperature();
+		ESP_LOGI(logtag, "Temperature: %f", temperature);
+		ESP_LOGD(logtag, "Read BME pressure");
+		pressure = bme.readPressure();
+		ESP_LOGI(logtag, "Pressure: %f", pressure);
+		ESP_LOGD(logtag, "Read BME temperature");
+		humidity = bme.readHumidity();
+		ESP_LOGD(logtag, "Humidity: %f", humidity);
+	}
+	else
+		ESP_LOGW(logtag, "No BME sensor detected");
+
 	SHT21 sht21;
 	ESP_LOGI(logtag, "SHT21 begin");
 	sht21.begin();
 	ESP_LOGI(logtag, "SHT21 get humidity");
-	humidity = sht21.getHumidity();
-	ESP_LOGI(logtag, "humidity %f", humidity);
+	float humidity_sht = sht21.getHumidity();
+	ESP_LOGI(logtag, "humidity %f", humidity_sht);
+	if(humidity_sht < HUMIDITY_MAX && humidity_sht > HUMIDITY_MIN)
+		humidity = humidity_sht;
 	ESP_LOGI(logtag, "SHT21 get temperature");
-	temperature = sht21.getTemperature();
-	ESP_LOGI(logtag, "temperature %f", temperature);
+	float temperature_sht = sht21.getTemperature();
+	ESP_LOGI(logtag, "temperature %f", temperature_sht);
+	if(temperature_sht < TEMPERATURE_MAX && temperature_sht > TEMPERATURE_MIN)
+		temperature = temperature_sht;
 
 	ESP_LOGD(logtag, "Get CO2");
 	MHZ19 mhz19_pwm(2, MH_Z19B_PWM_PIN);
@@ -92,12 +115,14 @@ void setup()
 	}
 	char payload[50];
 	int len = sprintf(payload, "{");
-	if(temperature > -20 && temperature < 60)
+	if(temperature > TEMPERATURE_MIN && temperature < TEMPERATURE_MAX)
 		len += sprintf(payload + len, "\"T\": %f, ", temperature);
-	if(humidity > 1 && humidity < 100)
+	if(humidity > HUMIDITY_MIN && humidity < HUMIDITY_MAX)
 		len += sprintf(payload + len, "\"h\": %f, ", humidity);
-	if(co2 > 100 && co2 < 5000)
+	if(co2 > CO2_MIN && co2 < CO2_MAX)
 		len += sprintf(payload + len, "\"co2\": %i, ", co2);
+	if(pressure > PRESSURE_MIN && pressure < PRESSURE_MAX)
+		len += sprintf(payload + len, "\"p\": %f, ", pressure);
 	len += sprintf(payload + len, "\"ID\": \"%s\", \"v\": \"%s\"}",  WiFi.macAddress().c_str(), GIT_TAG);
 	ESP_LOGI(logtag, "MQTT: publish message: %s", payload);
 	if(mqttClient.publish(MQTT_TOPIC, payload))
