@@ -131,11 +131,11 @@ void setup()
 	int len = sprintf(payload, "{");
 	if(temperature > TEMPERATURE_MIN && temperature < TEMPERATURE_MAX && abs(temperature - temperature_last) < TEMPERATURE_MAX_DIFF)
 		len += sprintf(payload + len, "\"T\": %f, ", temperature);
-	if(humidity > HUMIDITY_MIN && humidity < HUMIDITY_MAX && abs(humidity - humidity_last) > HUMIDITY_MAX_DIFF)
+	if(humidity > HUMIDITY_MIN && humidity < HUMIDITY_MAX && abs(humidity - humidity_last) < HUMIDITY_MAX_DIFF)
 		len += sprintf(payload + len, "\"h\": %f, ", humidity);
-	if(co2 > CO2_MIN && co2 < CO2_MAX && abs(co2 - co2_last) > CO2_MAX_DIFF)
+	if(co2 > CO2_MIN && co2 < CO2_MAX && abs(co2 - co2_last) < CO2_MAX_DIFF)
 		len += sprintf(payload + len, "\"co2\": %i, ", co2);
-	if(pressure > PRESSURE_MIN && pressure < PRESSURE_MAX && abs(pressure - pressure_last) > PRESSURE_MAX_DIFF)
+	if(pressure > PRESSURE_MIN && pressure < PRESSURE_MAX && abs(pressure - pressure_last) < PRESSURE_MAX_DIFF)
 		len += sprintf(payload + len, "\"p\": %f, ", pressure);
 	len += sprintf(payload + len, "\"ID\": \"%s\", \"v\": \"%s\"}",  WiFi.macAddress().c_str(), GIT_TAG);
 	ESP_LOGI(logtag, "MQTT: publish message: %s", payload);
