@@ -7,17 +7,28 @@
 /* Max Min Values */
 #define TEMPERATURE_MAX 50
 #define TEMPERATURE_MIN -20
+#define TEMPERATURE_MAX_DIFF 5
 #define HUMIDITY_MAX 100
 #define HUMIDITY_MIN 20
+#define HUMIDITY_MAX_DIFF 5
 #define PRESSURE_MAX 150000
 #define PRESSURE_MIN 50000
+#define PRESSURE_MAX_DIFF 50
 #define CO2_MAX 5000
 #define CO2_MIN 100
+#define CO2_MAX_DIFF 500
 
 /* Timing */
 #define CYCLE_TIME_IN_S 60
 #define TIMEOUT_FOR_WATCHDOG_IN_MS 1000*60*5
 #define TIME_BEFORE_SLEEP_IN_MS 5000
+
+/* EEPROM */
+#define EEPROM_SIZE 16
+#define EEPROM_ADDR_TEMPERATURE 0
+#define EEPROM_ADDR_HUMIDITY 4
+#define EEPROM_ADDR_CO2 8
+#define EEPROM_ADDR_PRESSURE 12
 
 /* MQTT */
 #define MQTT_HOST "example.net"  // CHANGE: IP of MQTT Broker
@@ -57,6 +68,7 @@
 #include <limits.h>
 #include <MHZ19.h>
 #include <Adafruit_BME280.h>
+#include <EEPROM.h>
 #include "misc.h"
 #include "wifi.h"
 #include "root_ca.h"

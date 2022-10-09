@@ -100,6 +100,20 @@ void setup()
 	int co2 = mhz19_pwm.getPpmPwm();
 	ESP_LOGI(logtag, "co2: %i", co2);
 
+	ESP_LOGD(logtag, "EEPROM begin");
+	EEPROM.begin(EEPROM_SIZE);
+	float temperature_last = EEPROM.readFloat(EEPROM_ADDR_TEMPERATURE);
+	int co2_last = EEPROM.readInt(EEPROM_ADDR_CO2);
+	float humidity_last = EEPROM.readFloat(EEPROM_ADDR_HUMIDITY);
+	float pressure_last = EEPROM.readFloat(EEPROM_ADDR_PRESSURE);
+	ESP_LOGD(logtag, "temperature last: %f, co2 last: %i, humidity last %f, pressure last: %f", temperature_last, co2_last, humidity_last, pressure_last);
+	EEPROM.writeFloat(EEPROM_ADDR_TEMPERATURE, temperature);
+	EEPROM.writeInt(EEPROM_ADDR_CO2, co2);
+	EEPROM.writeFloat(EEPROM_ADDR_HUMIDITY, humidity);
+	EEPROM.writeFloat(EEPROM_ADDR_PRESSURE, pressure);
+	ESP_LOGD(logtag, "EEPROM commit");
+	EEPROM.commit();
+
 	MQTTClient mqttClient;
 	WiFiClientSecure net;
 	ESP_LOGD(logtag, "WiFiClient: set CA");
@@ -115,13 +129,13 @@ void setup()
 	}
 	char payload[50];
 	int len = sprintf(payload, "{");
-	if(temperature > TEMPERATURE_MIN && temperature < TEMPERATURE_MAX)
+	if(temperature > TEMPERATURE_MIN && temperature < TEMPERATURE_MAX && abs(temperature - temperature_last) < TEMPERATURE_MAX_DIFF)
 		len += sprintf(payload + len, "\"T\": %f, ", temperature);
-	if(humidity > HUMIDITY_MIN && humidity < HUMIDITY_MAX)
+	if(humidity > HUMIDITY_MIN && humidity < HUMIDITY_MAX && abs(humidity - humidity_last) > HUMIDITY_MAX_DIFF)
 		len += sprintf(payload + len, "\"h\": %f, ", humidity);
-	if(co2 > CO2_MIN && co2 < CO2_MAX)
+	if(co2 > CO2_MIN && co2 < CO2_MAX && abs(co2 - co2_last) > CO2_MAX_DIFF)
 		len += sprintf(payload + len, "\"co2\": %i, ", co2);
-	if(pressure > PRESSURE_MIN && pressure < PRESSURE_MAX)
+	if(pressure > PRESSURE_MIN && pressure < PRESSURE_MAX && abs(pressure - pressure_last) > PRESSURE_MAX_DIFF)
 		len += sprintf(payload + len, "\"p\": %f, ", pressure);
 	len += sprintf(payload + len, "\"ID\": \"%s\", \"v\": \"%s\"}",  WiFi.macAddress().c_str(), GIT_TAG);
 	ESP_LOGI(logtag, "MQTT: publish message: %s", payload);
