@@ -59,7 +59,6 @@
 /* includes */
 #include <Arduino.h>
 #include <esp32fota.h>
-//#include <FastLED.h>
 #include <esp_log.h>
 #include <WiFiClientSecure.h>
 #include <MQTT.h>

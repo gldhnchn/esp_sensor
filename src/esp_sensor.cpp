@@ -96,6 +96,7 @@ void setup()
 
 	ESP_LOGD(logtag, "Get CO2");
 	MHZ19 mhz19_pwm(2, MH_Z19B_PWM_PIN);
+	mhz19_pwm.setPwmData(CALC_5000_PPM);
 	digitalRead(MH_Z19B_PWM_PIN);
 	int co2 = mhz19_pwm.getPpmPwm();
 	ESP_LOGI(logtag, "co2: %i", co2);
@@ -143,26 +144,6 @@ void setup()
 		ESP_LOGI(logtag, "MQTT: publishing succeeded");
 	else
 		ESP_LOGE(logtag, "MQTT: publishing failed");
-
-/*
-	CRGB leds[NUM_LEDS];
-//init fast LED strip
-#if defined LED_TYPE_NEOPIXEL && defined LED_TYPE_APA102
-#error "Please specify only one LED type"
-#elif defined LED_TYPE_NEOPIXEL
-		FastLED.addLeds<NEOPIXEL, LED_DATA_PIN>(leds, NUM_LEDS);
-#elif defined LED_TYPE_APA102
-		FastLED.addLeds<APA102, LED_DATA_PIN, LED_CLOCK_PIN, BGR>(leds, NUM_LEDS);
-#else
-#error "Please specify one LED type"
-#endif
-		FastLED.setBrightness(LED_OVERALL_BRIGHTNESS);
-		leds[LED_INDEX_BT].setColorCode(COLOR_BT_CONNECTION_OFF);
-		FastLED.show();
-		//init trigger and ir handling
-		create_tasks();
-		FastLED.show();
-*/
 	Led led(ONBOARDLED_PIN);
 	led.blinks();
 	ESP_LOGI(logtag, "Disconnect MQTT");
