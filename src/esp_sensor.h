@@ -16,7 +16,7 @@
 #define PRESSURE_MAX_DIFF 50
 #define CO2_MAX 5000
 #define CO2_MIN 100
-#define CO2_MAX_DIFF 500
+#define CO2_MAX_DIFF 1000
 
 /* Timing */
 #define CYCLE_TIME_IN_S 60
@@ -35,6 +35,7 @@
 #define MQTT_PORT 8883  // CHANGE: Port of MQTT Broker
 #define MQTT_TOPIC "home/"  // CHANGE: MQTT Topic to publish the CO2 value to
 #define MQTT_USER "esp32"
+#define MQTT_PASWORD "password"
 #define MQTT_TIMEOUT_IN_MS 10000
 
 /* Sensor Pins */
