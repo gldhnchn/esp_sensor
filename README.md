@@ -7,6 +7,14 @@ This is a IOT project to measure and plot CO2, temperature, humidity and pressur
 * MHZ19-B, CO2 sensor, https://funduinoshop.com/elektronische-module/sensoren/gase/co2-sensor-vergleichbar-mit-mh-z19b-mit-pinleiste
 * BME280, temperature, humidity, pressure sensor, https://funduinoshop.com/elektronische-module/sensoren/druck-gewicht/bme280-luftdruck-feuchtigkeits-temperatursensor-i2c/spi
 * Raspberry Pi 3b+, mini computer
+### Software
+* ESP32 firmware from this repo
+* [mosquitto](https://github.com/eclipse/mosquitto) as mqtt broker
+* [python script](https://github.com/gldhnchn/esp_sensor/blob/main/pi/mqtt.py) for reading a SHT21 sensor on a raspberry pi GPIO and Deutscher Wetterdienst data
+* [node-red](https://github.com/node-red/node-red) to subscribe to the mqtt broker, process the data and write it to influxdb
+* [influxdb](https://github.com/influxdata/influxdb) to store data
+* [grafana](https://github.com/grafana/grafana) to plot data
+* [nginx](https://github.com/nginx/nginx) as reverse proxy
 ### System strucutre
 ![system structure](https://github.com/gldhnchn/esp_sensor/blob/main/doc/esp_sensor.svg)
 ### Build
