@@ -16,7 +16,7 @@ void start_watchdog(void *parameter)
 void setup()
 {
 	const char *logtag = "setup";
-	esp_log_level_set("*", ESP_LOG_VERBOSE);
+	esp_log_level_set("*", ESP_LOG_NONE);
 
 	Serial.begin(115200);
 
