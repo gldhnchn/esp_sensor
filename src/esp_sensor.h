@@ -38,17 +38,8 @@
 #define MQTT_PASWORD "password"
 #define MQTT_TIMEOUT_IN_MS 10000
 
-/* Sensor Pins */
+/* Pins */
 #define MH_Z19B_PWM_PIN 4
-
-/* RGB LEDs */
-//choose one LED type
-//#define LED_TYPE_APA102
-#define LED_TYPE_NEOPIXEL
-#define LED_CLOCK_PIN 18 //only used for spi leds like APA102
-#define LED_DATA_PIN 19
-#define NUM_LEDS 1
-#define LED_OVERALL_BRIGHTNESS 20 //scale 0 to 255
 #define ONBOARDLED_PIN 2
 
 /* WIFI */
