@@ -60,7 +60,6 @@
 #include <MHZ19.h>
 #include <Adafruit_BME280.h>
 #include <EEPROM.h>
-#include "misc.h"
 #include "wifi.h"
 #include "root_ca.h"
 

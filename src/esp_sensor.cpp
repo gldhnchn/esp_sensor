@@ -144,8 +144,6 @@ void setup()
 		ESP_LOGI(logtag, "MQTT: publishing succeeded");
 	else
 		ESP_LOGE(logtag, "MQTT: publishing failed");
-	Led led(ONBOARDLED_PIN);
-	led.blinks();
 	ESP_LOGI(logtag, "Disconnect MQTT");
 	mqttClient.disconnect();
 	ESP_LOGI(logtag, "Disconnect WiFi");
