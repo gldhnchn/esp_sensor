@@ -30,6 +30,7 @@
 #define EEPROM_ADDR_CO2 8
 #define EEPROM_ADDR_PRESSURE 12
 
+#error "Did you change all connection configs?" // Delete me when you did it.
 /* MQTT */
 #define MQTT_HOST "example.net"  // CHANGE: IP of MQTT Broker
 #define MQTT_PORT 8883  // CHANGE: Port of MQTT Broker
