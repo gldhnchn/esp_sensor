@@ -35,8 +35,8 @@
 #define MQTT_HOST "example.net"  // CHANGE: IP of MQTT Broker
 #define MQTT_PORT 8883  // CHANGE: Port of MQTT Broker
 #define MQTT_TOPIC "home/"  // CHANGE: MQTT Topic to publish the CO2 value to
-#define MQTT_USER "esp32"
-#define MQTT_PASWORD "password"
+#define MQTT_USER "esp32" // CHANGE
+#define MQTT_PASWORD "password" // CHANGE
 #define MQTT_TIMEOUT_IN_MS 10000
 
 /* Pins */
@@ -44,9 +44,9 @@
 #define ONBOARDLED_PIN 2
 
 /* WIFI */
-#define WIFI_SSID "wlanssid"
-#define WIWI_PASSWORD "wlanpassword"
-#define OTA_FIRWAMRE_MANIFEST_URL "https://example.net/esp32fota.json"
+#define WIFI_SSID "wlanssid" // CHANGE
+#define WIWI_PASSWORD "wlanpassword" // CHANGE
+#define OTA_FIRWAMRE_MANIFEST_URL "https://example.net/esp32fota.json" // CHANGE
 
 /* ++++++++ */
 /* includes */
