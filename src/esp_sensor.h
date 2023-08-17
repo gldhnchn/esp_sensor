@@ -45,7 +45,7 @@
 #define HEATER_PIN 13
 
 /* Heater */
-#define TEMPERATURE_HEATER_OFF 23.8
+#define TEMPERATURE_HEATER_OFF 23.9
 
 /* WIFI */
 #define WIFI_SSID "wlanssid" // CHANGE
