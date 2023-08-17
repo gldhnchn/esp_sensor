@@ -117,6 +117,7 @@ void setup()
 	ESP_LOGD(logtag, "EEPROM commit");
 	EEPROM.commit();
 
+	gpio_hold_dis((gpio_num_t)HEATER_PIN);
 	if (temperature > TEMPERATURE_HEATER_OFF)
 		digitalWrite(HEATER_PIN, LOW);
 	else
