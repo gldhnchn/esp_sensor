@@ -42,6 +42,10 @@
 /* Pins */
 #define MH_Z19B_PWM_PIN 4
 #define ONBOARDLED_PIN 2
+#define HEATER_PIN 13
+
+/* Heater */
+#define TEMPERATURE_HEATER_OFF 24.5
 
 /* WIFI */
 #define WIFI_SSID "wlanssid" // CHANGE

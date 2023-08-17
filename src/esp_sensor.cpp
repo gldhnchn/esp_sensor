@@ -59,6 +59,8 @@ void setup()
 		ESP_LOGI(logtag, "No updated needed");
 	}
 
+	pinMode(HEATER_PIN, OUTPUT);
+
 	float temperature = FLT_MAX;
 	float humidity = FLT_MAX;
 	float pressure = FLT_MAX;
@@ -114,6 +116,12 @@ void setup()
 	EEPROM.writeFloat(EEPROM_ADDR_PRESSURE, pressure);
 	ESP_LOGD(logtag, "EEPROM commit");
 	EEPROM.commit();
+
+	if (temperature > TEMPERATURE_HEATER_OFF)
+		digitalWrite(HEATER_PIN, LOW);
+	else
+		digitalWrite(HEATER_PIN, HIGH);
+	gpio_hold_en((gpio_num_t)HEATER_PIN);
 
 	MQTTClient mqttClient;
 	WiFiClientSecure net;
