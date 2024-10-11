@@ -19,7 +19,7 @@
 #define CO2_MAX_DIFF 1000
 
 /* Timing */
-#define CYCLE_TIME_IN_S 60
+#define CYCLE_TIME_IN_S 30
 #define TIMEOUT_FOR_WATCHDOG_IN_MS 1000*60*5
 #define TIME_BEFORE_SLEEP_IN_MS 5000
 
@@ -45,7 +45,7 @@
 #define HEATER_PIN 13
 
 /* Heater */
-#define TEMPERATURE_HEATER_OFF 19.
+#define TEMPERATURE_HEATER_OFF 18.
 
 /* WIFI */
 #define WIFI_SSID "wlanssid" // CHANGE
